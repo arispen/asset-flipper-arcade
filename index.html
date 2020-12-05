@@ -1,19 +1,36 @@
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css">
     <style>
+        body {
+            max-width: 1400px;
+        }
         #layout {
             display: flex;
+            width: 100%;
+        }
+        #game-container {
+        }
+        #inspector {
+            padding: 20px;
+            width: 300px;
+        }
+        input {
+            width: 100%;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser.js"></script>
 </head>
 
 <body>
     <div id="layout">
         <div id="game-container"></div>
         <div id="inspector">
-            <span>Background Image:</span><input id="bgImage" type="text"/><br />
-            <span>Player Image:</span><input id="playerImage" type="text" /><br />
+            <span>Background Image:</span><input id="bgImage" type="text"/>
+            <span>Player Image:</span><input id="playerImage" type="text" />
+            <span>Enemy Image:</span><input id="enemyImage" type="text" />
+            <span>Point Image:</span><input id="pointImage" type="text" />
+            <span>Player Speed:</span><input id="playerSpeed" type="number" />
             <button id="build" onclick="build()">Build</button>
         </div>
     </div>
@@ -21,20 +38,23 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
+        const bgImageInput = document.getElementById("bgImage");
+        const playerImageInput = document.getElementById("playerImage");
+        const enemyImageInput = document.getElementById("enemyImage");
+        const pointImageInput = document.getElementById("pointImage");
+        const playerSpeedInput = document.getElementById("playerSpeed");
         const config = {
-            pointImage: "https://i.ibb.co/qCxx0Bw/Mug-of-Beer.png",
-            enemyImage: "https://i.ibb.co/0nDF55T/spike.png",
             playerSize: 70,
             pointSize: 40,
-            enemySize: 30,
-            playerSpeed: 400,
+            enemySize: 80,
+            playerSpeed:  urlParams.get("playerSpeed") || 700,
             pointSpawnInterval: 2500,
             addEnemyInterval: 20000,
             respawnEnemiesInterval: 500,
             type: Phaser.AUTO,
             parent: "game-container",
-            width: 640,
-            height: 480,
+            width: 960,
+            height: 640,
             physics: {
                 default: "arcade",
                 arcade: {
@@ -62,16 +82,27 @@
         function preload() {
             const backgroundImage = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
             const playerImage = urlParams.get("playerImage") || "https://i.ibb.co/10bV3sr/viking.png";
+            const pointImage = urlParams.get("pointImage") || "https://i.ibb.co/qCxx0Bw/Mug-of-Beer.png";
+            const enemyImage = urlParams.get("enemyImage") || "https://i.ibb.co/0nDF55T/spike.png";
             this.load.image("bg", backgroundImage);
             this.load.image("player", playerImage);
-            this.load.image("point", config.pointImage);
-            this.load.image("enemy", config.enemyImage);
+            this.load.image("point", pointImage);
+            this.load.image("enemy", enemyImage);
+            renderParamsInInspector();
+        }
+
+        function renderParamsInInspector() {
+            bgImageInput.value = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
+            playerImageInput.value = urlParams.get("playerImage") || "https://i.ibb.co/10bV3sr/viking.png";
+            enemyImageInput.value = urlParams.get("enemyImage") || "https://i.ibb.co/qCxx0Bw/Mug-of-Beer.png";
+            pointImageInput.value = urlParams.get("pointImage") || "https://i.ibb.co/0nDF55T/spike.png";
+            // TODO: handle default values
+            playerSpeedInput.value = urlParams.get("playerSpeed") || 700;
         }
 
         function create() {
             gameScene = this;
             cursors = this.input.keyboard.createCursorKeys();
-            console.log(this);
 
             const bgImage = this.add.image(
                 config.width / 2,
@@ -122,7 +153,7 @@
 
             scoreText = this.add.text(16, 16, "0", {
                 fontSize: "32px",
-                fill: "#000",
+                fill: "#fff",
             });
         }
 
@@ -134,7 +165,7 @@
             if (cursors.left.isDown) {
                 player.setVelocityX(-config.playerSpeed);
             } else if (cursors.right.isDown) {
-                player.setVelocityX(config.playerSpeed);
+                player.setVelocityX(+config.playerSpeed);
             } else {
                 player.setVelocityX(0);
             }
@@ -182,9 +213,9 @@
         }
 
         function build() {
-            const bgImageInput = document.getElementById("bgImage").value;
-            const playerImageInput = document.getElementById("playerImage").value;
-            window.location = `http://127.0.0.1:8080/?bgImage=${bgImageInput}&playerImage=${playerImageInput}`;
+            window.location = `/?bgImage=${bgImageInput.value}` + 
+            `&playerImage=${playerImageInput.value}&enemyImage=${enemyImageInput.value}&pointImage=${pointImageInput.value}` +
+            `&playerSpeed=${playerSpeedInput.value}` ;
         }
     </script>
 </body>
