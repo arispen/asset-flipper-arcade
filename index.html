@@ -1,0 +1,192 @@
+<html>
+<head>
+    <style>
+        #layout {
+            display: flex;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser.js"></script>
+</head>
+
+<body>
+    <div id="layout">
+        <div id="game-container"></div>
+        <div id="inspector">
+            <span>Background Image:</span><input id="bgImage" type="text"/><br />
+            <span>Player Image:</span><input id="playerImage" type="text" /><br />
+            <button id="build" onclick="build()">Build</button>
+        </div>
+    </div>
+
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const config = {
+            pointImage: "https://i.ibb.co/qCxx0Bw/Mug-of-Beer.png",
+            enemyImage: "https://i.ibb.co/0nDF55T/spike.png",
+            playerSize: 70,
+            pointSize: 40,
+            enemySize: 30,
+            playerSpeed: 400,
+            pointSpawnInterval: 2500,
+            addEnemyInterval: 20000,
+            respawnEnemiesInterval: 500,
+            type: Phaser.AUTO,
+            parent: "game-container",
+            width: 640,
+            height: 480,
+            physics: {
+                default: "arcade",
+                arcade: {
+                    gravity: { y: 300 },
+                    debug: false,
+                },
+            },
+            scene: {
+                preload,
+                create,
+                update,
+            },
+        };
+
+        const game = new Phaser.Game(config);
+        let gameScene;
+        let cursors;
+        let player;
+        let point;
+        let enemies;
+        let gameOver;
+        let score = 0;
+        let scoreText;
+
+        function preload() {
+            const backgroundImage = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
+            const playerImage = urlParams.get("playerImage") || "https://i.ibb.co/10bV3sr/viking.png";
+            this.load.image("bg", backgroundImage);
+            this.load.image("player", playerImage);
+            this.load.image("point", config.pointImage);
+            this.load.image("enemy", config.enemyImage);
+        }
+
+        function create() {
+            gameScene = this;
+            cursors = this.input.keyboard.createCursorKeys();
+            console.log(this);
+
+            const bgImage = this.add.image(
+                config.width / 2,
+                config.height / 2,
+                "bg"
+            );
+            bgImage.displayWidth = config.width;
+            bgImage.displayHeight = config.height;
+
+            player = this.physics.add.sprite(
+                config.width / 2,
+                config.height - 50,
+                "player"
+            );
+            player.displayWidth = config.playerSize;
+            player.displayHeight = config.playerSize;
+            player.setCollideWorldBounds(true);
+
+            enemies = this.physics.add.group();
+
+            point = this.physics.add.sprite(100, 1000, "point");
+            point.displayWidth = config.pointSize;
+            point.displayHeight = config.pointSize;
+
+            this.time.addEvent({
+                delay: config.pointSpawnInterval,
+                loop: true,
+                callback: spawnPoint,
+                callbackScope: this,
+            });
+
+            this.time.addEvent({
+                delay: config.addEnemyInterval,
+                loop: true,
+                callback: addEnemy,
+                callbackScope: this,
+            });
+
+            this.time.addEvent({
+                delay: config.respawnEnemiesInterval,
+                loop: true,
+                callback: respawnEnemies,
+                callbackScope: this,
+            });
+
+            this.physics.add.collider(player, enemies, hitEnemy, null, this);
+            this.physics.add.overlap(player, point, scorePoint, null, this);
+
+            scoreText = this.add.text(16, 16, "0", {
+                fontSize: "32px",
+                fill: "#000",
+            });
+        }
+
+        function update(time, delta) {
+            if (gameOver) {
+                return;
+            }
+
+            if (cursors.left.isDown) {
+                player.setVelocityX(-config.playerSpeed);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(config.playerSpeed);
+            } else {
+                player.setVelocityX(0);
+            }
+        }
+
+        function spawnPoint() {
+            point.setY(-100);
+            point.setX(Phaser.Math.RND.between(0, config.width));
+            point.setVelocityY(0);
+        }
+
+        function hitEnemy() {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            gameOver = true;
+        }
+
+        function scorePoint() {
+            score += 1;
+            scoreText.setText(score);
+            point.setY(1000);
+        }
+
+        function respawnEnemies() {
+            enemies.children.iterate(function (child) {
+                if (child.y > config.height) {
+                    child.setY(
+                        Phaser.Math.RND.between(-config.enemySize, -config.enemySize * 10)
+                    );
+                    child.setX(Phaser.Math.RND.between(0, config.width));
+                    child.setVelocityY(0);
+                }
+            });
+        }
+
+        function addEnemy() {
+            const enemy = enemies.create(
+                Phaser.Math.RND.between(0, config.width),
+                -100,
+                "enemy"
+            );
+            enemy.displayWidth = config.enemySize;
+            enemy.displayHeight = config.enemySize;
+            enemy.setVelocityY(0);
+        }
+
+        function build() {
+            const bgImageInput = document.getElementById("bgImage").value;
+            const playerImageInput = document.getElementById("playerImage").value;
+            window.location = `http://127.0.0.1:8080/?bgImage=${bgImageInput}&playerImage=${playerImageInput}`;
+        }
+    </script>
+</body>
+
+</html>
