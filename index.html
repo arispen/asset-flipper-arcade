@@ -30,7 +30,7 @@
             <span>Player Image:</span><input id="playerImage" type="text" />
             <span>Enemy Image:</span><input id="enemyImage" type="text" />
             <span>Point Image:</span><input id="pointImage" type="text" />
-            <span>Player Speed:</span><input id="playerSpeed" type="number" />
+            <span style="display:none"><span>Player Speed: </span><input id="playerSpeed" type="number" /></span>
             <button id="build" onclick="build()">Build</button>
         </div>
     </div>
@@ -46,8 +46,8 @@
         const config = {
             playerSize: 70,
             pointSize: 40,
-            enemySize: 80,
-            playerSpeed:  urlParams.get("playerSpeed") || 700,
+            enemySize: 50,
+            playerSpeed:  urlParams.get("playerSpeed") || 600,
             pointSpawnInterval: 2500,
             addEnemyInterval: 20000,
             respawnEnemiesInterval: 500,
@@ -97,7 +97,7 @@
             enemyImageInput.value = urlParams.get("enemyImage") || "https://i.ibb.co/qCxx0Bw/Mug-of-Beer.png";
             pointImageInput.value = urlParams.get("pointImage") || "https://i.ibb.co/0nDF55T/spike.png";
             // TODO: handle default values
-            playerSpeedInput.value = urlParams.get("playerSpeed") || 700;
+            playerSpeedInput.value = urlParams.get("playerSpeed") || 600;
         }
 
         function create() {
