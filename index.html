@@ -7,32 +7,46 @@
             max-width: 1400px;
         }
         #layout {
-            display: flex;
+            /* display: flex; */
             width: 100%;
-        }
-        #game-container {
         }
         #inspector {
             padding: 20px;
-            width: 300px;
+            width: 500px;
         }
         input {
             width: 100%;
+        }
+        h2 {
+            font-size: 15px;
         }
     </style>
 </head>
 
 <body>
     <div id="layout">
+        <h1 id="js-game-title"></h1>
+        <h2>game created using Asset Flipper Arcade</h2>
         <div id="game-container"></div>
         <div id="inspector">
+            <h3>(Refresh page to restart the game)</h3>
+            <h3>Modify this game here:</h3>
+            <span>Game Title:</span><input id="title" type="text"/>
             <span>Background Image:</span><input id="bgImage" type="text"/>
             <span>Player Image:</span><input id="playerImage" type="text" />
             <span>Enemy Image:</span><input id="enemyImage" type="text" />
             <span>Point Image:</span><input id="pointImage" type="text" />
-            <span style="display:none"><span>Player Speed: </span><input id="playerSpeed" type="number" /></span>
-            <button id="build" onclick="build()">Build</button>
+            <span>Player Speed: </span><input id="playerSpeed" type="number" />
+            <span>Player Width:</span><input id="playerWidth" type="number" />
+            <span>Player Height:</span><input id="playerHeight" type="number" />
+            <span>Point Width:</span><input id="pointWidth" type="number" />
+            <span>Point Height:</span><input id="pointHeight" type="number" />
+            <span>Enemy Width:</span><input id="enemyWidth" type="number" />
+            <span>Enemy Height:</span><input id="enemyHeight" type="number" />
+            <br>
+            <button id="build" onclick="build()">Rebuild!</button>
         </div>
+        <footer>Asset Flipper Arcade v.1.1.0, 2020, Arispen</footer>
     </div>
 
 
