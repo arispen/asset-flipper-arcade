@@ -5,14 +5,16 @@ const playerImageInput = document.getElementById("playerImage");
 const enemyImageInput = document.getElementById("enemyImage");
 const pointImageInput = document.getElementById("pointImage");
 const playerSpeedInput = document.getElementById("playerSpeed");
+const playerWidthInput = document.getElementById("playerWidth");
+const playerHeightInput = document.getElementById("playerHeight");
+const pointWidthInput = document.getElementById("pointWidth");
+const pointHeightInput = document.getElementById("pointHeight");
+const enemyWidthInput = document.getElementById("enemyWidth");
+const enemyHeightInput = document.getElementById("enemyHeight");
 
 const config = {
-    playerSize: 70,
-    pointSize: 40,
-    enemySize: 50,
-    playerSpeed:  urlParams.get("playerSpeed") || 600,
     pointSpawnInterval: 2500,
-    addEnemyInterval: 20000,
+    addEnemyInterval: 2000,
     respawnEnemiesInterval: 500,
     type: Phaser.AUTO,
     parent: "game-container",
@@ -43,31 +45,28 @@ let score = 0;
 let scoreText;
 
 function preload() {
-    // TODO: handle default values
-    const gameTitle = urlParams.get("gameTitle") || "Thirsty Viking!";
-    const backgroundImage = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
-    const playerImage = urlParams.get("playerImage") || "https://i.imgur.com/hFQ9U0U.png";
-    const pointImage = urlParams.get("pointImage") || "https://i.imgur.com/aRFc6nu.png";
-    const enemyImage = urlParams.get("enemyImage") || "https://i.ibb.co/0nDF55T/spike.png";
-    document.getElementById("js-game-title").innerHTML = gameTitle;
-    document.title = `${gameTitle} - a game created using Asset Flipper Arcade`;
-    this.load.image("bg", backgroundImage);
-    this.load.image("player", playerImage);
-    this.load.image("point", pointImage);
-    this.load.image("enemy", enemyImage);
     renderParamsInInspector();
+    document.getElementById("js-game-title").innerHTML = gameTitleInput.value;
+    document.title = `${gameTitleInput.value} - a game created using Asset Flipper Arcade`;
+    this.load.image("bg", bgImageInput.value);
+    this.load.image("player", playerImageInput.value);
+    this.load.image("point", pointImageInput.value);
+    this.load.image("enemy", enemyImageInput.value);
 }
 
 function renderParamsInInspector() {
-    // TODO: handle default values
     gameTitleInput.value = urlParams.get("gameTitle") || "Thirsty Viking!"
     bgImageInput.value = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
     playerImageInput.value = urlParams.get("playerImage") || "https://i.imgur.com/hFQ9U0U.png";
     pointImageInput.value = urlParams.get("pointImage") || "https://i.imgur.com/aRFc6nu.png";
     enemyImageInput.value = urlParams.get("enemyImage") || "https://i.ibb.co/0nDF55T/spike.png";
-
-
     playerSpeedInput.value = urlParams.get("playerSpeed") || 600;
+    playerWidthInput.value = urlParams.get("playerWidth") || 70;
+    playerHeightInput.value = urlParams.get("playerHeight") || 70;
+    pointWidthInput.value = urlParams.get("pointWidth") || 40;
+    pointHeightInput.value = urlParams.get("pointHeight") || 40;
+    enemyWidthInput.value = urlParams.get("enemyWidth") || 50;
+    enemyHeightInput.value = urlParams.get("enemyHeight") || 50;
 }
 
 function create() {
@@ -87,15 +86,15 @@ function create() {
         config.height - 50,
         "player"
     );
-    player.displayWidth = config.playerSize;
-    player.displayHeight = config.playerSize;
+    player.displayWidth = playerWidthInput.value;
+    player.displayHeight = playerHeightInput.value;
     player.setCollideWorldBounds(true);
 
     enemies = this.physics.add.group();
 
     point = this.physics.add.sprite(100, 1000, "point");
-    point.displayWidth = config.pointSize;
-    point.displayHeight = config.pointSize;
+    point.displayWidth = pointWidthInput.value;
+    point.displayHeight = pointHeightInput.value;
 
     this.time.addEvent({
         delay: config.pointSpawnInterval,
@@ -133,9 +132,9 @@ function update(time, delta) {
     }
 
     if (cursors.left.isDown) {
-        player.setVelocityX(-config.playerSpeed);
+        player.setVelocityX(-playerSpeedInput.value);
     } else if (cursors.right.isDown) {
-        player.setVelocityX(+config.playerSpeed);
+        player.setVelocityX(+playerSpeedInput.value);
     } else {
         player.setVelocityX(0);
     }
@@ -163,7 +162,7 @@ function respawnEnemies() {
     enemies.children.iterate(function (child) {
         if (child.y > config.height) {
             child.setY(
-                Phaser.Math.RND.between(-config.enemySize, -config.enemySize * 10)
+                Phaser.Math.RND.between(-enemyHeightInput.value, (+enemyHeightInput.value) * 10)
             );
             child.setX(Phaser.Math.RND.between(0, config.width));
             child.setVelocityY(0);
@@ -177,13 +176,19 @@ function addEnemy() {
         -100,
         "enemy"
     );
-    enemy.displayWidth = config.enemySize;
-    enemy.displayHeight = config.enemySize;
+    enemy.displayWidth = enemyWidthInput.value;
+    enemy.displayHeight = enemyHeightInput.value;
     enemy.setVelocityY(0);
 }
 
 function build() {
     window.location = `/?gameTitle=${gameTitleInput.value}&bgImage=${bgImageInput.value}` + 
     `&playerImage=${playerImageInput.value}&enemyImage=${enemyImageInput.value}&pointImage=${pointImageInput.value}` +
-    `&playerSpeed=${playerSpeedInput.value}` ;
+    `&playerSpeed=${playerSpeedInput.value}` +
+    `&playerWidth=${playerWidthInput.value}` +
+    `&playerHeight=${playerHeightInput.value}` +
+    `&pointWidth=${pointWidthInput.value}` +
+    `&pointHeight=${pointHeightInput.value}` +
+    `&enemyWidth=${enemyWidthInput.value}` +
+    `&enemyHeight=${enemyHeightInput.value}`;
 }
