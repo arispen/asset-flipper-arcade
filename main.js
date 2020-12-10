@@ -36,7 +36,8 @@ const config = {
 
 const game = new Phaser.Game(config);
 let gameScene;
-let cursors;
+let left;
+let right;
 let player;
 let point;
 let enemies;
@@ -75,7 +76,8 @@ function preload() {
 
 function create() {
     gameScene = this;
-    cursors = this.input.keyboard.createCursorKeys();
+    left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
     const bgImage = this.add.image(
         config.width / 2,
@@ -135,9 +137,9 @@ function update(time, delta) {
         return;
     }
 
-    if (cursors.left.isDown) {
+    if (left.isDown) {
         player.setVelocityX(-playerSpeedInput.value);
-    } else if (cursors.right.isDown) {
+    } else if (right.isDown) {
         player.setVelocityX(+playerSpeedInput.value);
     } else {
         player.setVelocityX(0);
