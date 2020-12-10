@@ -13,7 +13,7 @@
         <div id="game-container"></div>
         <div id="inspector">
             <h3>(Refresh page to restart the game)</h3>
-            <h3>Modify this game here:</h3>
+            <h3 class="mt-big">Modify this game here:</h3>
             <span>Game Title:</span><input id="gameTitle" type="text"/>
             <span>Background Image:</span><input id="bgImage" type="text"/>
             <span>Player Image:</span><input id="playerImage" type="text" />
@@ -27,7 +27,12 @@
             <span>Enemy Width:</span><input id="enemyWidth" type="number" />
             <span>Enemy Height:</span><input id="enemyHeight" type="number" />
             <br>
-            <button id="build" onclick="build()">Rebuild!</button>
+            <button id="build" onclick="build()">Rebuild the game!</button>
+            <p>
+                Share this game using the link below:<br>
+                <a id="js-game-link" href=""></a>
+            </p>
+
         </div>
     </div>
     <footer>Asset Flipper Arcade v.1.1.0, 2020, Arispen</footer>

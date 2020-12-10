@@ -14,7 +14,7 @@ const enemyHeightInput = document.getElementById("enemyHeight");
 
 const config = {
     pointSpawnInterval: 2500,
-    addEnemyInterval: 2000,
+    addEnemyInterval: 20000,
     respawnEnemiesInterval: 500,
     type: Phaser.AUTO,
     parent: "game-container",
@@ -44,16 +44,6 @@ let gameOver;
 let score = 0;
 let scoreText;
 
-function preload() {
-    renderParamsInInspector();
-    document.getElementById("js-game-title").innerHTML = gameTitleInput.value;
-    document.title = `${gameTitleInput.value} - a game created using Asset Flipper Arcade`;
-    this.load.image("bg", bgImageInput.value);
-    this.load.image("player", playerImageInput.value);
-    this.load.image("point", pointImageInput.value);
-    this.load.image("enemy", enemyImageInput.value);
-}
-
 function renderParamsInInspector() {
     gameTitleInput.value = urlParams.get("gameTitle") || "Thirsty Viking!"
     bgImageInput.value = urlParams.get("bgImage") || "https://i.ibb.co/pLsmfxn/airadventurelevel4.png";
@@ -65,9 +55,23 @@ function renderParamsInInspector() {
     playerHeightInput.value = urlParams.get("playerHeight") || 70;
     pointWidthInput.value = urlParams.get("pointWidth") || 40;
     pointHeightInput.value = urlParams.get("pointHeight") || 40;
-    enemyWidthInput.value = urlParams.get("enemyWidth") || 50;
-    enemyHeightInput.value = urlParams.get("enemyHeight") || 50;
+    enemyWidthInput.value = urlParams.get("enemyWidth") || 30;
+    enemyHeightInput.value = urlParams.get("enemyHeight") || 70;
 }
+
+function preload() {
+    renderParamsInInspector();
+    document.getElementById("js-game-title").innerHTML = gameTitleInput.value;
+    document.title = `${gameTitleInput.value} - a game created using Asset Flipper Arcade`;
+    document.getElementById("js-game-link").setAttribute("href", document.location);
+    document.getElementById("js-game-link").innerText = document.location;
+    this.load.image("bg", bgImageInput.value);
+    this.load.image("player", playerImageInput.value);
+    this.load.image("point", pointImageInput.value);
+    this.load.image("enemy", enemyImageInput.value);
+}
+
+
 
 function create() {
     gameScene = this;
@@ -161,9 +165,8 @@ function scorePoint() {
 function respawnEnemies() {
     enemies.children.iterate(function (child) {
         if (child.y > config.height) {
-            child.setY(
-                Phaser.Math.RND.between(-enemyHeightInput.value, (+enemyHeightInput.value) * 10)
-            );
+            const randomY = Phaser.Math.RND.between(-enemyHeightInput.value, (-enemyHeightInput.value) * 10);
+            child.setY(randomY);
             child.setX(Phaser.Math.RND.between(0, config.width));
             child.setVelocityY(0);
         }
